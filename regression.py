@@ -6,7 +6,7 @@
 #    By: aderuell <aderuell@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/10/22 14:44:46 by aderuell          #+#    #+#              #
-#    Updated: 2015/10/24 20:19:47 by aderuell         ###   ########.fr        #
+#    Updated: 2015/10/24 21:12:54 by aderuell         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 #!/nfs/zfs-student-5/users/2013/aderuell/.brew/bin/python3
@@ -24,7 +24,6 @@ class LinearRegression():
 	t1 = 0.0
 	learningRate = 0.1
 	iterations = 10000
-	precision = None
 	dictionnaire = {}
 	m = 0
 	max_km = None
@@ -32,8 +31,7 @@ class LinearRegression():
 	min_km = None
 	min_price = None
 
-	def __init__(self, fichier, precision):
-		self.precision = precision
+	def __init__(self, fichier):
 		for row in fichier:
 			km = int(row['km'])
 			price = int(row['price'])
@@ -69,13 +67,7 @@ class LinearRegression():
 	def unscalePrice(self, value):
 		return (value * (self.max_price - self.min_price) + self.min_price)
 
-	def computeError(self):
-		total = 0
-		for km, price in self.dictionnaire.items():
-			total += (price - (self.m * km + self.t0 )) ** 2
-		return total / float(self.m)
-
-	def gradientDescentRunner(self):
+	def gradientDescent(self):
 		for i in range(self.iterations):
 			self.machineLearning()
 
@@ -102,11 +94,18 @@ class LinearRegression():
 		plt.plot([self.unscalePrice(estimatePrice(self.t0, self.t1, self.scaleKm(x))) for x in range(self.min_km, self.max_km)])
 		plt.show()
 
+	def putResultsInFile(self):
+		fichier = open('result.txt', 'w')
+		string = str(self.t0) + '\n' + str(self.t1) + '\n' + str(self.min_km) + '\n' + str(self.max_km) + '\n' + str(self.min_price) + '\n' + str(self.max_price) + '\n'
+		fichier.write(string)
+		fichier.close()
+
 #Main
 del argv[0]
-if len(argv) < 1 or len(argv) >= 3:
-	print('Not enough arguments')
-	print('Usage : python3 regression.py <data.csv> [<precision>]')
+if len(argv) < 1 or len(argv) >= 2:
+	print('Bad arguments')
+	print('Usage : python3 regression.py <data.csv>')
+	exit()
 else:
 	#Open csv
 	try:
@@ -116,21 +115,20 @@ else:
 		exit()
 
 	#Keep precision
-	if len(argv) >= 2:
-		try:
-			precision = float(argv[1])
-		except ValueError:
-			print('Bad precision')
-			exit()
-	else:
-		precision = 0
+	#if len(argv) >= 2:
+	#	try:
+	#		precision = float(argv[1])
+	#	except ValueError:
+	#		print('Bad precision')
+	#		exit()
+	#else:
+	#	precision = 0
 
-	lr = LinearRegression(fichier, precision)
-	lr.gradientDescentRunner()
-	#print(lr.t0)
-	#print(lr.t1)
+	lr = LinearRegression(fichier)
+	lr.gradientDescent()
 	#for km, price in lr.dictionnaire.items():
 	#	tmp_km = lr.scaleKm(km)
 	#	tmp_price = lr.unscalePrice(estimatePrice(lr.t0, lr.t1, tmp_km))
 	#	print('km :', km, ' price:', price, ' => ', tmp_price)
+	lr.putResultsInFile()
 	lr.showGraph()
