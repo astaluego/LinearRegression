@@ -6,7 +6,7 @@
 #    By: aderuell <aderuell@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/10/24 20:29:52 by aderuell          #+#    #+#              #
-#    Updated: 2015/10/24 21:59:16 by aderuell         ###   ########.fr        #
+#    Updated: 2015/10/24 22:02:52 by aderuell         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 #!/nfs/zfs-student-5/users/2013/aderuell/.brew/bin/python3
@@ -44,8 +44,7 @@ else:
 			scale_km = lr.scaleKm(int(km))
 			price = lr.estimatePrice(scale_km)
 			estimate_price = lr.unscalePrice(price)
-			print('km =', km, '\t\testimate price =', estimate_price)
-		except Exception as e:
-			print(e)
+			print('Km =', km, '\t\tEstimate price =', estimate_price)
+		except:
 			print(0)
 			exit()
