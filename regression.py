@@ -6,7 +6,7 @@
 #    By: aderuell <aderuell@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/10/22 14:44:46 by aderuell          #+#    #+#              #
-#    Updated: 2015/10/24 21:30:27 by aderuell         ###   ########.fr        #
+#    Updated: 2015/10/24 21:59:02 by aderuell         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 #!/nfs/zfs-student-5/users/2013/aderuell/.brew/bin/python3
@@ -28,7 +28,10 @@ class LinearRegression():
 	min_km = None
 	min_price = None
 
-	def __init__(self, fichier):
+	def __init__(self):
+		pass
+
+	def constructeurRegression(self, fichier):
 		for row in fichier:
 			km = int(row['km'])
 			price = int(row['price'])
@@ -38,6 +41,14 @@ class LinearRegression():
 		self.min_km = min(self.dictionnaire.keys())
 		self.max_price = max(self.dictionnaire.values())
 		self.min_price = min(self.dictionnaire.values())
+	
+	def constructeurEstimate(self, t0, t1, max_km, min_km, max_price, min_price):
+		self.t0 = t0
+		self.t1 = t1
+		self.max_km = max_km
+		self.min_km = min_km
+		self.max_price = max_price
+		self.min_price = min_price
 
 	def scaleKm(self, value):
 		return ((value - self.min_km) / (self.max_km - self.min_km))
@@ -77,42 +88,30 @@ class LinearRegression():
 
 	def putResultsInFile(self):
 		fichier = open('result.txt', 'w')
-		string = str(self.t0) + '\n' + str(self.t1) + '\n' + str(self.min_km) + '\n' + str(self.max_km) + '\n' + str(self.min_price) + '\n' + str(self.max_price) + '\n'
+		lst = (self.t0, self.t1, self.min_km, self.max_km, self.min_price, self.max_price)
+		string = '\n'.join(map(str, lst)) + '\n'
 		fichier.write(string)
 		fichier.close()
 
 	def estimatePrice(self, mileage):
-		return self.t0 + (self.t1 * mileage)
+		return self.t0 + (self.t1 * float(mileage))
 
 #Main
-del argv[0]
-if len(argv) < 1 or len(argv) >= 2:
-	print('Bad arguments')
-	print('Usage : python3 regression.py <data.csv>')
-	exit()
-else:
-	#Open csv
-	try:
-		fichier = csv.DictReader(open(argv[0],'r'))
-	except IOError:
-		print('Cannot open', argv[0])
+if __name__ == '__main__':
+	del argv[0]
+	if len(argv) < 1 or len(argv) >= 2:
+		print('Bad arguments')
+		print('Usage : python3 regression.py <data.csv>')
 		exit()
-
-	#Keep precision
-	#if len(argv) >= 2:
-	#	try:
-	#		precision = float(argv[1])
-	#	except ValueError:
-	#		print('Bad precision')
-	#		exit()
-	#else:
-	#	precision = 0
-
-	lr = LinearRegression(fichier)
-	lr.gradientDescent()
-	#for km, price in lr.dictionnaire.items():
-	#	tmp_km = lr.scaleKm(km)
-	#	tmp_price = lr.unscalePrice(estimatePrice(lr.t0, lr.t1, tmp_km))
-	#	print('km :', km, ' price:', price, ' => ', tmp_price)
-	lr.putResultsInFile()
-	lr.showGraph()
+	else:
+		#Open csv
+		try:
+			fichier = csv.DictReader(open(argv[0],'r'))
+		except IOError:
+			print('Cannot open', argv[0])
+			exit()
+		lr = LinearRegression()
+		lr.constructeurRegression(fichier)
+		lr.gradientDescent()
+		lr.putResultsInFile()
+		lr.showGraph()

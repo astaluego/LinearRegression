@@ -6,13 +6,14 @@
 #    By: aderuell <aderuell@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/10/24 20:29:52 by aderuell          #+#    #+#              #
-#    Updated: 2015/10/24 21:30:29 by aderuell         ###   ########.fr        #
+#    Updated: 2015/10/24 21:59:16 by aderuell         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 #!/nfs/zfs-student-5/users/2013/aderuell/.brew/bin/python3
 # -*-codinf:tuf-8 -*
 
 from sys import argv
+from regression import LinearRegression
 
 def estimatePrice(t0, t1, mileage):
 	return t0 + (t1 * float(mileage))
@@ -38,10 +39,13 @@ else:
 			max_km = int(fichier.readline())
 			min_price = int(fichier.readline())
 			max_price = int(fichier.readline())
-			scale_km = scaleKm(int(km), min_km, max_km)
-			price = estimatePrice(t0, t1, scale_km)
-			estimate_price = unscalePrice(price, min_price, max_price)
-			print('km = ', km, '\t\testimate price = ', estimate_price)
-		except:
+			lr = LinearRegression()
+			lr.constructeurEstimate(t0, t1, max_km, min_km, max_price, min_price)
+			scale_km = lr.scaleKm(int(km))
+			price = lr.estimatePrice(scale_km)
+			estimate_price = lr.unscalePrice(price)
+			print('km =', km, '\t\testimate price =', estimate_price)
+		except Exception as e:
+			print(e)
 			print(0)
 			exit()
