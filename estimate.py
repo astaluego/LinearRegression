@@ -6,23 +6,14 @@
 #    By: aderuell <aderuell@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/10/24 20:29:52 by aderuell          #+#    #+#              #
-#    Updated: 2015/10/24 22:02:52 by aderuell         ###   ########.fr        #
+#    Updated: 2015/10/26 16:05:46 by aderuell         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
-#!/nfs/zfs-student-5/users/2013/aderuell/.brew/bin/python3
+#!/.brew/bin/python3
 # -*-codinf:tuf-8 -*
 
 from sys import argv
 from regression import LinearRegression
-
-def estimatePrice(t0, t1, mileage):
-	return t0 + (t1 * float(mileage))
-
-def scaleKm(km, min_km, max_km):
-	return ((km - min_km) / (max_km - min_km))
-
-def unscalePrice(price, min_price, max_price):
-	return (price * (max_price - min_price) + min_price)
 
 #Main
 del argv[0]
@@ -44,7 +35,7 @@ else:
 			scale_km = lr.scaleKm(int(km))
 			price = lr.estimatePrice(scale_km)
 			estimate_price = lr.unscalePrice(price)
-			print('Km =', km, '\t\tEstimate price =', estimate_price)
+			print('Km =', km, '\t\tEstimate price =', int(estimate_price))
 		except:
 			print(0)
 			exit()
