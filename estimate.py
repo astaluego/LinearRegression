@@ -6,7 +6,7 @@
 #    By: aderuell <aderuell@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/10/24 20:29:52 by aderuell          #+#    #+#              #
-#    Updated: 2015/10/26 16:05:46 by aderuell         ###   ########.fr        #
+#    Updated: 2015/10/30 14:17:03 by aderuell         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 #!/.brew/bin/python3
@@ -35,6 +35,8 @@ else:
 			scale_km = lr.scaleKm(int(km))
 			price = lr.estimatePrice(scale_km)
 			estimate_price = lr.unscalePrice(price)
+			if int(estimate_price) < 0:
+				estimate_price = 0
 			print('Km =', km, '\t\tEstimate price =', int(estimate_price))
 		except:
 			print(0)
