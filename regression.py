@@ -6,11 +6,11 @@
 #    By: aderuell <aderuell@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/10/22 14:44:46 by aderuell          #+#    #+#              #
-#    Updated: 2015/10/30 14:44:04 by aderuell         ###   ########.fr        #
+#    Updated: 2016/12/12 14:50:11 by aderuell         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
-#!/.brew/bin/python3
-# -*-codinf:tuf-8 -*
+#!/usr/local/bin/ python3
+# -*- coding: utf-8 -*-
 
 from sys import argv
 import matplotlib.pyplot as plt
@@ -50,14 +50,11 @@ class LinearRegression():
 		self.max_price = max_price
 		self.min_price = min_price
 
-	def scaleKm(self, value):
-		return ((value - self.min_km) / (self.max_km - self.min_km))
+	def scaleValue(self, value, min, max):
+		return ((value - min) / (max - min))
 
-	def scalePrice(self, value):
-		return ((value - self.min_price) / (self.max_price - self.min_price))
-
-	def unscalePrice(self, value):
-		return (value * (self.max_price - self.min_price) + self.min_price)
+	def unscaleValue(self, value, min, max):
+		return (value * (max - min) + min)
 
 	def gradientDescent(self):
 		for i in range(self.iterations):
@@ -68,8 +65,8 @@ class LinearRegression():
 		sum_t1 = 0.0
 		tmp = self.learningRate * (1/self.m)
 		for km, price in self.dictionnaire.items():
-			km = self.scaleKm(km)
-			price = self.scalePrice(price)
+			km = self.scaleValue(km, self.min_km, self.max_km)
+			price = self.scaleValue(price, self.min_price, self.max_price)
 			sum_t0 += self.estimatePrice(km) - price
 			tmp_t0 = tmp * sum_t0;
 			sum_t1 += (self.estimatePrice(km) - price) * km
@@ -83,7 +80,7 @@ class LinearRegression():
 		plt.xlabel('Km')
 		plt.ylabel('Price')
 		plt.plot(x, y, 'ro')
-		plt.plot([self.unscalePrice(self.estimatePrice(self.scaleKm(x))) for x in range(self.min_km, self.max_km)])
+		plt.plot([self.unscaleValue(self.estimatePrice(self.scaleValue(x, self.min_km, self.max_km)), self.min_price, self.max_price) for x in range(self.min_km, self.max_km)])
 		plt.show()
 
 	def putResultsInFile(self):
